@@ -28,7 +28,8 @@ describe Oystercard do
   describe '#touch_in' do
     it 'should change card status to be in use' do
       top_up_card
-      expect { subject.touch_in }.to change { subject.in_journey? }.from(false).to(true)
+      subject.touch_in
+      expect(subject).to be_in_journey
     end
 
     it 'should not let the user touch in with a balance below the minimum' do
@@ -41,7 +42,8 @@ describe Oystercard do
     it 'should change card status to not be in use' do
       top_up_card
       subject.touch_in
-      expect { subject.touch_out(fare) }.to change { subject.in_journey? }.from(true).to(false)
+      subject.touch_out(fare)
+      expect(subject).to_not be_in_journey
     end
 
     it 'should deduct the fare from the balance' do 

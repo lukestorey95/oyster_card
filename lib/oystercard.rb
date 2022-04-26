@@ -15,10 +15,6 @@ class Oystercard
     @balance += amount
   end
 
-  def check_balance
-    balance
-  end
-
   def in_journey?
     in_use
   end
@@ -42,11 +38,10 @@ class Oystercard
   end
 
   def insufficient_balance?
-    check_balance < MIN_CHARGE
+    balance < MIN_CHARGE
   end
 
   def deduct(fare)
     @balance -= fare
   end
-
 end
