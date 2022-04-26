@@ -1,7 +1,7 @@
 describe Oystercard do
   max_balance = Oystercard::MAX_BALANCE
-  min_charge = Oystercard::MIN_CHARGE
-  fare = min_charge
+  min_fare = Oystercard::MIN_FARE
+  fare = min_fare
   
   describe '#balance' do
     it 'should have default value of 0' do
@@ -33,7 +33,7 @@ describe Oystercard do
 
       it 'should not let the user touch in with a balance below the minimum' do
         empty_card = Oystercard.new
-        expect{ empty_card.touch_in }.to raise_error "Insufficient funds - balance below #{min_charge}"
+        expect{ empty_card.touch_in }.to raise_error "Insufficient funds - balance below #{min_fare}"
       end
 
     end
