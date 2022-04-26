@@ -1,71 +1,51 @@
 describe Oystercard do
+  max_balance = Oystercard::MAX_BALANCE
+  min_charge = Oystercard::MIN_CHARGE
+  fare = min_charge
 
   def top_up_card
     subject.top_up(20)
   end
 
-  describe '#check_balance' do
-    it 'returns default value' do
-      expect(subject.check_balance).to eq(0)
+  describe '#balance' do
+    it 'should have default value of 0' do
+      expect(subject.balance).to eq(0)
     end
   end
 
   describe '#top_up' do
-    it 'will increase the balance on the card by the amount specified' do
-      expect{ subject.top_up(5) }.to change{ subject.check_balance }.by(5)
+    it 'should increase the balance by the amount' do
+      amount = 20
+      expect{ subject.top_up(amount) }.to change{ subject.balance }.by(amount)
     end
 
-    it 'will not allow the balance to go above the maximum allowed' do
-      max_balance = Oystercard::MAXIMUM_BALANCE
+    it 'should not allow the balance to go above the maximum allowed' do
       subject.top_up(max_balance)
       expect { subject.top_up(1) }.to raise_error("Maximum balance #{max_balance} exceeded")
     end
   end
 
-  describe '#deduct' do
-    it{ should respond_to(:deduct).with(1) }
-
-    it 'Should reduce the balance on the card by the fare' do
-      top_up_card
-      expect{subject.deduct(5)}.to change{ subject.check_balance }.by(-5)
-    end
-  end
-
-  describe '#in_journey?' do
-    it { should respond_to(:in_journey?) }
-
-    it 'should return whether the card is in use' do
-      expect(subject.in_journey?).to be(true).or be(false)
-    end
-  end
-
   describe '#touch_in' do
-    it { should respond_to(:touch_in) }
-
-    it 'should change card to be in use' do
+    it 'should change card status to be in use' do
       top_up_card
       expect { subject.touch_in }.to change { subject.in_journey? }.from(false).to(true)
     end
 
-    it 'should not let you touch in with a balance below £1' do
-      minimum_balance_to_travel = Oystercard::MINIMUM_BALANCE_TO_TRAVEL 
-      expect{subject.touch_in}.to raise_error "Insufficient funds - balance below #{minimum_balance_to_travel}"
+    it 'should not let the user touch in with a balance below the minimum' do
+      expect{ subject.touch_in }.to raise_error "Insufficient funds - balance below #{min_charge}"
     end
 
   end
 
   describe '#touch_out' do
-    it { should respond_to(:touch_out) }
-
-    it 'should change card to not be in use' do
+    it 'should change card status to not be in use' do
       top_up_card
       subject.touch_in
-      fare = Oystercard::MINIMUM_BALANCE_TO_TRAVEL 
       expect { subject.touch_out(fare) }.to change { subject.in_journey? }.from(true).to(false)
     end
-    it 'decducts the correct amount from my card when I touch out' do 
-      fare = Oystercard::MINIMUM_BALANCE_TO_TRAVEL 
-      expect{subject.touch_out(fare) }.to change {subject.check_balance}.by(-fare) 
+
+    it 'should deduct the fare from the balance' do 
+      expect{ subject.touch_out(fare) }.to change { subject.balance }.by(-fare) 
     end
   end
 end
