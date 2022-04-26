@@ -30,8 +30,9 @@ class Oystercard
     @in_use = true
   end
 
-  def touch_out
+  def touch_out(fare)
     @in_use = false
+    deduct(fare)
   end
 
   private

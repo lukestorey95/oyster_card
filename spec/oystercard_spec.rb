@@ -60,7 +60,12 @@ describe Oystercard do
     it 'should change card to not be in use' do
       top_up_card
       subject.touch_in
-      expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to(false)
+      fare = Oystercard::MINIMUM_BALANCE_TO_TRAVEL 
+      expect { subject.touch_out(fare) }.to change { subject.in_journey? }.from(true).to(false)
+    end
+    it 'decducts the correct amount from my card when I touch out' do 
+      fare = Oystercard::MINIMUM_BALANCE_TO_TRAVEL 
+      expect{subject.touch_out(fare) }.to change {subject.check_balance}.by(-fare) 
     end
   end
 end
